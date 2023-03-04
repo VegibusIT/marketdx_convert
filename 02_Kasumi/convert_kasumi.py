@@ -3,22 +3,32 @@ import openpyxl
 import datetime
 import copy
 
-export_file_name = 'midorino_final'  # * 出力ファイル名
+xlsx_file_name = 'hitachinoushiku_0304_02'
+xlsx_file = f'{xlsx_file_name}.xlsx'
+xlsx_file_start = f'{xlsx_file}_start.xlsx'
+export_file_name = f'{xlsx_file}_final.xlsx'  # * 出力ファイル名
+
 days_list = {
-    '月曜': '2/27',
-    '火曜': '2/28',
-    '水曜': '3/1',
-    '木曜': '3/2',
-    '金曜': '3/3',
-    '土曜': '3/4',
-    '日曜': '3/5',
+    '月曜': '3/6',
+    '火曜': '3/7',
+    '水曜': '3/8',
+    '木曜': '3/9',
+    '金曜': '3/10',
+    '土曜': '3/11',
+    '日曜': '3/12',
 }
 
-df = pd.read_csv('./midorino_0227.csv', header=0, sep=',')
+wb = openpyxl.load_workbook(xlsx_file)
+ws = wb.worksheets[0]
+ws.delete_rows(0, 8)
+wb.save(xlsx_file_start)
+
+df = pd.read_excel(f'./{xlsx_file_start}', header=0)
+print('df: ', df)
+
 df = df.fillna(0)
 df[['月曜', '火曜', '水曜', '木曜', '金曜', '土曜', '日曜']] = df[['月曜', '火曜', '水曜', '木曜', '金曜', '土曜', '日曜']].astype('int')
-df = df.loc[~((df['月曜'] == 0 ) & (df['火曜'] == 0 ) & (df['水曜'] == 0 ) & (df['木曜'] == 0 ) & (df['金曜'] == 0 ) & (df['土曜'] == 0 ) & (df['日曜'] == 0 ))]
-# lf = df.loc[~((df['ID'] == 18654) | (df['ID'] == 18656))]
+df = df.loc[~((df['月曜'] == 0) & (df['火曜'] == 0) & (df['水曜'] == 0) & (df['木曜'] == 0) & (df['金曜'] == 0) & (df['土曜'] == 0) & (df['日曜'] == 0))]
 df = df[['ID', '品目（量目は目安です）', '出荷元（生産者）', '生産地', 'ロット', '商品入数', '単位', '月曜', '火曜', '水曜', '木曜', '金曜', '土曜', '日曜']]
 df = df.rename(columns={'品目（量目は目安です）': '商品名', '出荷元（生産者）': '生産者名', '生産地': '産地（都道府県）', 'ロット': '入数'})
 df.insert(7, 'JANコード', '')
@@ -34,9 +44,9 @@ col = df.pop('規格')
 df.insert(loc=5, column='規格', value=col)
 print('df: ', df.head(10))
 df = df.rename(columns=days_list)
-df.to_excel(f'./{export_file_name}.xlsx', index=False)
+df.to_excel(f'./{export_file_name}', index=False)
 
-file = f'./{export_file_name}.xlsx'
+file = f'./{export_file_name}'
 wb = openpyxl.load_workbook(file)
 ws = wb['Sheet1']
 ws.insert_cols(9, 2)
