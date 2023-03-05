@@ -18,7 +18,7 @@ days_list = {
     '日曜': '3/12',
 }
 
-wb = openpyxl.load_workbook(xlsx_file)
+wb = openpyxl.load_workbook(xlsx_file, data_only=True)
 ws = wb.worksheets[0]
 ws.delete_rows(0, 8)
 wb.save(xlsx_file_start)

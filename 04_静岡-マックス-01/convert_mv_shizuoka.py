@@ -17,7 +17,7 @@ days_list = {
     '土曜': '3/11',
 }
 
-wb = openpyxl.load_workbook(xlsx_file)
+wb = openpyxl.load_workbook(xlsx_file, data_only=True)
 ws = wb.worksheets[0]
 ws.delete_rows(0, 6)
 wb.save(xlsx_file_start)
@@ -44,7 +44,7 @@ df.insert(loc=5, column='規格', value=col)
 df = df.drop('入数', axis=1)
 col = df.pop('数量')
 df.insert(loc=4, column='入数', value=col)
-print('df: ', df.head(10))
+print('df: ', df.head(20))
 
 df = df.rename(columns=days_list)
 df.to_excel(f'./{export_file_name}', index=False)
