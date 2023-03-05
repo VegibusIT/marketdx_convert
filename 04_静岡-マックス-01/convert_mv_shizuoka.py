@@ -27,11 +27,11 @@ df = pd.read_excel(f'./{xlsx_file_start}', header=0)
 df = df.fillna(0)
 df[['月曜', '火曜', '水曜', '木曜', '金曜', '土曜']] = df[['月曜', '火曜', '水曜', '木曜', '金曜', '土曜']].astype('int')
 df = df.loc[~((df['月曜'] == 0) & (df['火曜'] == 0) & (df['水曜'] == 0) & (df['木曜'] == 0) & (df['金曜'] == 0) & (df['土曜'] == 0))]
-df = df[['ID', '品目（量目は目安です）', '出荷元（生産者）', '生産地', 'ロット', '商品入数', '単位', '月曜', '火曜', '水曜', '木曜', '金曜', '土曜', '数量']]
+df = df[['ID', '品目（量目は目安です）', '出荷元（生産者）', '生産地', 'ロット', '商品入数', '単位', '月曜', '火曜', '水曜', '木曜', '金曜', '土曜', 'やさいバス数量']]
 df = df.rename(columns={'品目（量目は目安です）': '商品名', '出荷元（生産者）': '生産者名', '生産地': '産地（都道府県）', 'ロット': '入数'})
 df.insert(7, 'JANコード', '')
 df.insert(8, '掲載単価', '')
-df[['ID', '入数', '商品入数', '数量']] = df[['ID', '入数', '商品入数', '数量']].astype('int')
+df[['ID', '入数', '商品入数', 'やさいバス数量']] = df[['ID', '入数', '商品入数', 'やさいバス数量']].astype('int')
 df['商品入数'] = df['商品入数'].apply(str)
 
 # * 規格というカラムを作って、指定の場所に挿入
@@ -40,10 +40,12 @@ df = df.drop(['商品入数', '単位'], axis=1)
 col = df.pop('規格')
 df.insert(loc=5, column='規格', value=col)
 
-# * 数量カラムと入数カラムを入れ替え
+# * やさいバス数量カラムと入数カラムを入れ替え
 df = df.drop('入数', axis=1)
-col = df.pop('数量')
+col = df.pop('やさいバス数量')
 df.insert(loc=4, column='入数', value=col)
+# * 最終列に空発列を追加
+df[''] = ''
 print('df: ', df.head(20))
 
 df = df.rename(columns=days_list)
@@ -53,6 +55,5 @@ file = f'./{export_file_name}'
 wb = openpyxl.load_workbook(file)
 ws = wb['Sheet1']
 ws.insert_cols(9, 2)
-ws.insert_cols(17, 1)
 ws.insert_rows(0, 3)
 wb.save(file)
