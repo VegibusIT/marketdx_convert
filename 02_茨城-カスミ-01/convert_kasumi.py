@@ -2,31 +2,33 @@ import pandas as pd
 import openpyxl
 import datetime
 import copy
+import os
 
-xlsx_file_name = 'hitachinoushiku_0304_02'
-xlsx_file = f'{xlsx_file_name}.xlsx'
-xlsx_file_start = f'{xlsx_file}_start.xlsx'
-export_file_name = f'{xlsx_file}_final.xlsx'  # * 出力ファイル名
+original_xlsx_name = 'original'
+original_xlsx = 'original.xlsx'
+xlsx_file_start = f'{original_xlsx_name}_start.xlsx'
+export_file_name = 'cart_final.xlsx'  # * 出力ファイル名
 
 days_list = {
-    '月曜': '3/6',
-    '火曜': '3/7',
-    '水曜': '3/8',
-    '木曜': '3/9',
-    '金曜': '3/10',
-    '土曜': '3/11',
-    '日曜': '3/12',
+    '月曜': '3/13',
+    '火曜': '3/14',
+    '水曜': '3/15',
+    '木曜': '3/16',
+    '金曜': '3/17',
+    '土曜': '3/18',
+    '日曜': '3/19',
 }
 
-wb = openpyxl.load_workbook(xlsx_file, data_only=True)
+wb = openpyxl.load_workbook(f'{original_xlsx}', data_only=True)
 ws = wb.worksheets[0]
-ws.delete_rows(0, 8)
-wb.save(xlsx_file_start)
+ws.delete_rows(0, 6)
+wb.save(f'{xlsx_file_start}')
 
 df = pd.read_excel(f'./{xlsx_file_start}', header=0)
 print('df: ', df)
 
 df = df.fillna(0)
+print('df: ', df)
 df[['月曜', '火曜', '水曜', '木曜', '金曜', '土曜', '日曜']] = df[['月曜', '火曜', '水曜', '木曜', '金曜', '土曜', '日曜']].astype('int')
 df = df.loc[~((df['月曜'] == 0) & (df['火曜'] == 0) & (df['水曜'] == 0) & (df['木曜'] == 0) & (df['金曜'] == 0) & (df['土曜'] == 0) & (df['日曜'] == 0))]
 df = df[['ID', '品目（量目は目安です）', '出荷元（生産者）', '生産地', 'やさいバス数量', '商品入数', '単位', '月曜', '火曜', '水曜', '木曜', '金曜', '土曜', '日曜']]
@@ -54,4 +56,6 @@ wb = openpyxl.load_workbook(file)
 ws = wb['Sheet1']
 ws.insert_cols(9, 2)
 ws.insert_rows(0, 3)
-wb.save(file)
+wb.save(f'{file}')
+
+os.remove(f'./{xlsx_file_start}')
