@@ -1,0 +1,25 @@
+class _Source():
+    STORE_NAME_ROW = 3
+    ORDER_DATE_ROW = 4
+    ORDER_STARTING_ROW = 5
+
+    PRODUCT_ID_COLUMN = 1
+    LOT_COLUMN = 5
+    SPEC_COLUMN = 6
+    ORDER_STARTING_COLUMN = 15
+
+
+class _Destination():
+    ORDER_DATE_ROW = 4
+    ORDER_STARTING_ROW = 5
+
+    PRODUCT_ID_COLUMN = 1
+    LOT_COLUMN = 5
+    SPEC_COLUMN = 6
+    ORDER_STARTING_COLUMN = 11
+
+
+SOURCE = _Source()
+DESTINATION = _Destination()
+
+TEMPLATE_FILENAME = 'template.xlsx'
