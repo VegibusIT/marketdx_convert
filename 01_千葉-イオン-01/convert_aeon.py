@@ -2,15 +2,15 @@ import pandas as pd
 import copy
 import datetime
 import openpyxl
+import math
 
 # time = datetime.datetime.now()
 # time_now = time.strftime('%Y-%m-%d %H:%M:%S')
-xlsx_file_name = 'original'
-xlsx_file = f'{xlsx_file_name}.xlsx'
-xlsx_file_start = f'{xlsx_file}_start.xlsx'
-export_file_name = f'{xlsx_file}_final.xlsx'  # * 出力ファイル名
+original_xlsx_name = 'original'
+original_xlsx = 'original.xlsx'
+xlsx_file_start = f'{original_xlsx_name}_start.xlsx'
 
-wb = openpyxl.load_workbook(xlsx_file, data_only=True)
+wb = openpyxl.load_workbook(original_xlsx, data_only=True)
 wb.save(xlsx_file_start)
 
 # extract target_connect_id and make it List
@@ -19,7 +19,10 @@ df = pd.read_excel(f'./{xlsx_file_start}', header=0)
 extract_col = ['最終納品先店舗名', '販売日', '商品名', '販売単価', '出荷確定数', '生産者名', '産地市町村名', 'JANコード', 'ID', '商品入数', '単位', 'やさいバス数量']
 
 df = df[extract_col]
-df['商品入数'] = df['商品入数'].apply(str)
+df = df.dropna(how='any')
+print('df: ', df[['ID', '商品入数', '単位', 'やさいバス数量']])
+df['ID'] = df['ID'].astype('int')
+df['商品入数'] = df['商品入数'].astype('int').astype('str')
 df['規格'] = df['商品入数'].str.cat(df['単位'])
 df = df.sort_values(by=['最終納品先店舗名', '商品名'])
 rename_col = {'販売単価': '掲載単価', '産地市町村名': '産地（都道府県）'}
@@ -66,8 +69,8 @@ for k, v in list.items():
         order_df.at[v[1], '産地（都道府県）'] = v['産地（都道府県）']
         order_df.at[v[1], '入数'] = v['やさいバス数量']
         order_df.at[v[1], '規格'] = v['規格']
-        order_df.at[v[1], 'JANコード'] = v['JANコード']
-        order_df.at[v[1], '掲載単価'] = v['掲載単価']
+        order_df.at[v[1], 'JANコード'] = ''
+        order_df.at[v[1], '掲載単価'] = ''
 
     order_df.reset_index(inplace=True)
     order_df = order_df.rename(columns={'index': '商品名'})
